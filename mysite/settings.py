@@ -135,9 +135,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+# Đảm bảo BASE_DIR đã được định nghĩa ở đầu file settings.py
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# Nơi chứa các file tĩnh gốc của bạn (nếu bạn để trong thư mục mysite/static)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "mysite", "static"),
+]
+
+# Nơi Render sẽ gom file vào (nên đặt tên khác với STATICFILES_DIRS)
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
