@@ -1,0 +1,50 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} Form edit {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+
+<h1>Cập nhật thông tin</h1>
+<p>I'm testing form edit</p>
+
+<form method="POST" action="{% url 'profiles_update' id=profile.id %}">
+   {% csrf_token %}
+
+   <div class="flex-col">
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="full_name" type="text" id="full_name" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.full_name }}" />
+         <label for="full_name" class="form__label">Họ tên</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="birthday" type="date" id="birthday" class="form__input" required value="{{ profile.birthday|date:'Y-m-d' }}" placeholder=" " />
+         <label for="birthday" class="form__label">Ngày sinh</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="sex" type="text" id="sex" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.sex }}" />
+         <label for="sex" class="form__label">Giới tính</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="birth_place" type="text" id="birth_place" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.birth_place }}" />
+         <label for="birth_place" class="form__label">Nơi sinh</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="nation" type="text" id="nation" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.nation }}" />
+         <label for="nation" class="form__label">Dân tộc</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="recruitment_day" type="date" id="recruitment_day" class="form__input" required value="{{ profile.recruitment_day|date:'Y-m-d' }}" placeholder=" " />
+         <label for="recruitment_day" class="form__label">Ngày vào làm</label>
+      </div>
+
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="job_title" type="text" id="job_title" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.job_title }}" />
+         <label for="job_title" class="form__label">Công việc</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="department" type="text" id="department" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.department }}" />
+         <label for="department" class="form__label">Phòng/ban</label>
+      </div>
+      <button type="submit" name="welcome" value="Welcome" style="width: 120px; height: 39px" class="btn-like">Cập nhật</button>
+   </div>
+</form>
+
+{% endblock %}

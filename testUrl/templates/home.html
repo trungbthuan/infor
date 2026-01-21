@@ -1,0 +1,14 @@
+{% extends "sidebar.html" %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    {% block title %} This is first page {% endblock %} {% block content %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <h1 class="mau-xanh">Hello! This is my Home page.</h1>
+    <br />
+
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "sidebar.html" %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    {% block title %} This is first page {% endblock %} {% block content %}
+    <link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" /> 
+
+    <h1>Hello, i'm testting python.</h1>
+    <br />
+
+    <div class="flex-row">
+      <div class="form" style="width: 250px; height: 20px;">
+        <input
+          name="msg"
+          type="text"
+          id="email"
+          class="form__input"
+          autocomplete="off"
+          placeholder=" "
+        />
+        <label for="email" class="form__label">Câu thông báo</label>
+      </div>
+
+      <button
+        name="welcome"
+        value="Welcome"
+        style="width: 120px; height: 39px;"
+        class="btn-like" 
+        onclick="show()"
+      >
+        Button 7
+      </button>
+    </div>
+    <script language="JavaScript">
+      function show() {
+        alert(document.getElementsByName("msg")[0].value);
+      }
+    </script>
+    {% endblock %}
+  </body>
+</html>

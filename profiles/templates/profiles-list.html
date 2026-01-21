@@ -1,0 +1,70 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} This is profiles page {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myTable.css' %}" />
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+
+{% csrf_token %}
+<h1>Danh sách thông tin nhân viên</h1>
+
+<table id="table" class="styled-table">
+   <thead>
+      <tr>
+         <th>Stt</th>
+         <th>Id</th>
+         <th>Full Name</th>
+         <th>Birthday</th>
+         <th>Sex</th>
+         <th>Birth place</th>
+         <th>Nation</th>
+         <th>Recruitment day</th>
+         <th>Job title</th>
+         <th>Department</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for profile in profiles %}
+      <tr>
+         <td></td>
+         <td>{{profile.id}}</td>
+         <td>{{profile.full_name}}</td>
+         <td>{{profile.birthday}}</td>
+         <td>{{profile.sex}}</td>
+         <td>{{profile.birth_place}}</td>
+         <td>{{profile.nation}}</td>
+         <td>{{profile.recruitment_day}}</td>
+         <td>{{profile.job_title}}</td>
+         <td>{{profile.department}}</td>
+      </tr>
+      {% endfor %}
+   </tbody>
+</table>
+<script>
+   let table = document.getElementById("table");
+
+   for (let i = 1; i <= table.rows.length; i++) {
+      table.rows[i].cells[0].innerHTML = zeroPad(i.toString(), 2, "0");
+      table.rows[i].cells[3].innerHTML = formatDateVN(new Date(table.rows[i].cells[3].innerHTML));
+   }
+
+   function zeroPad(numberStr, padStart, char) {
+      return numberStr.padStart(padStart, char);
+   }
+
+   function formatDateVN(strDate) {
+      let curDay = strDate.getDate();
+      let curMonth = strDate.getMonth() + 1;
+      let curYear = strDate.getFullYear();
+
+      function checkDayMonth(i) {
+         if (i < 10) {
+            i = "0" + i;
+         }
+         return i;
+      }
+
+      return checkDayMonth(curDay) + "/" + checkDayMonth(curMonth) + "/" + curYear;
+   }
+</script>
+
+{% endblock %}

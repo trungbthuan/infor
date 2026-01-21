@@ -1,0 +1,150 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} This is POST method page {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+<h1>Thêm sinh viên mới</h1>
+
+<form method="POST" action="{% url 'api-create-students' %}">
+   {% csrf_token %}
+   <div class="flex-col">
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="full_name" type="text" id="full_name" class="form__input" autocomplete="off" placeholder=" " required />
+         <label for="full_name" class="form__label">Họ tên</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="birthday" type="date" id="birthday" class="form__input" autocomplete="off" placeholder=" " required />
+         <label for="birthday" class="form__label">Ngày sinh</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <select name="sex" id="sex" class="form__input" style="padding-top: 8px" required>
+            <option value="" selected>-- Chọn giới tính --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+         </select>
+         <!--<input name="sex" type="text" id="sex" class="form__input" autocomplete="off" placeholder=" " />-->
+         <label for="sex" class="form__label">Giới tính</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="class_name" type="text" id="class_name" class="form__input" autocomplete="off" placeholder=" " required />
+         <label for="class_name" class="form__label">Lớp</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="average" type="text" id="average" class="form__input" autocomplete="off" placeholder=" " required />
+         <label for="average" class="form__label">Điểm trung bình</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <select name="morality" id="morality" class="form__input" style="padding-top: 8px" required>
+            <option value="" selected>-- Chọn hạnh kiểm --</option>
+            <option value="Tốt">Tốt</option>
+            <option value="Khá">Khá</option>
+            <option value="Trung bình">Trung bình</option>
+         </select>
+         <label for="morality" class="form__label">Đạo đức</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <select name="performance" id="performance" class="form__input" style="padding-top: 8px" required>
+            <option value="" selected>-- Chọn học lực --</option>
+            <option value="Xuất sắc">Xuất sắc</option>
+            <option value="Giỏi">Giỏi</option>
+            <option value="Khá">Khá</option>
+            <option value="Trung bình">Trung bình</option>
+            <option value="Tốt">Yếu</option>
+         </select>
+         <label for="performance" class="form__label">Học lực</label>
+      </div>
+      <button type="submit" name="welcome" value="Welcome" style="width: 120px; height: 39px" class="btn-like">Cập nhật</button>
+   </div>
+</form>
+
+<script>
+   //Sử dụng JavaScript để bắt sự kiện phím Enter và di chuyển focus đến thẻ tiếp theo//
+   document.addEventListener("DOMContentLoaded", (event) => {
+      const form = document.querySelector("form");
+      // Lấy tất cả input, select, và button theo thứ tự
+      const focusableElements = form.querySelectorAll('.form__input, select, button[type="submit"]');
+      const elements = Array.from(focusableElements);
+
+      if (elements.length > 0) {
+         elements[0].focus();
+      }
+
+      // Hàm chuyển focus đến phần tử tiếp theo
+      const focusNextElement = (currentIndex) => {
+         let nextIndex = (currentIndex + 1) % elements.length;
+         if (nextIndex >= 0 && nextIndex < elements.length) {
+            elements[nextIndex].focus();
+         }
+      };
+
+      // --- 1. Xử lý chuyển focus khi giá trị SELECT thay đổi (Change Event) ---
+      // SỰ KIỆN NÀY LÀ CHÌA KHÓA: Đảm bảo chuyển focus CHỈ sau khi người dùng chọn xong.
+      elements.forEach((el) => {
+         if (el.tagName === "SELECT") {
+            el.addEventListener("change", () => {
+               // Sau khi chọn xong, kiểm tra tính hợp lệ và chuyển focus
+               if (el.checkValidity()) {
+                  let currentIndex = elements.indexOf(el);
+                  focusNextElement(currentIndex);
+               }
+            });
+         }
+      });
+      // ---------------------------------------------------------------------
+
+      // --- 2. Xử lý sự kiện keydown (Chuyển focus bằng Enter) ---
+      form.addEventListener("keydown", (e) => {
+         if (e.key === "Enter" || e.keyCode === 13) {
+            const currentElement = document.activeElement;
+
+            // A. Nếu là nút Submit: Cho phép submit form
+            if (currentElement.type === "submit") {
+               return true;
+            }
+
+            // B. Nếu là thẻ SELECT: ƯU TIÊN hành vi mặc định
+            if (currentElement.tagName === "SELECT") {
+               // Nếu là required và trống, ta hiển thị lỗi nhưng vẫn cho Enter hoạt động
+               if (currentElement.hasAttribute("required") && !currentElement.checkValidity()) {
+                  // Vẫn chặn submit nếu trống, nhưng không chặn keydown hoàn toàn
+                  // Chúng ta chỉ cần hiển thị lỗi và cho Enter MỞ dropdown.
+                  currentElement.reportValidity();
+               }
+               // KHÔNG GỌI e.preventDefault() ở đây. Cho phép Enter mở dropdown.
+               return;
+            }
+
+            // C. Xử lý INPUT (Kiểm tra bắt buộc và chuyển focus)
+
+            // Ngăn chặn hành động mặc định ngay lập tức cho các input
+            e.preventDefault();
+
+            // 1. Kiểm tra tính hợp lệ của Input (nếu là required)
+            if (currentElement.hasAttribute("required") && !currentElement.checkValidity()) {
+               currentElement.reportValidity();
+               return; // Giữ focus nếu trống
+            }
+
+            // 2. Nếu Input hợp lệ: Chuyển focus
+            let currentIndex = elements.indexOf(currentElement);
+            focusNextElement(currentIndex);
+         }
+      });
+   });
+
+   //----------- Hết phần kiểm soát dữ liệu ---------------//
+
+   //------------------------------------------------------//
+   document.getElementById("birthday").value = setTodayToInput();
+
+   function setTodayToInput() {
+      const today = new Date();
+      // Lấy dd/mm/yyyy (nếu bạn cần dùng lại)
+      const dd = String(today.getDate()).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const yyyy = today.getFullYear();
+      // const ddmmyyyy = `${dd}/${mm}/${yyyy}`;
+      const inputDate = `${yyyy}-${mm}-${dd}`;
+      return inputDate;
+   }
+</script>
+{% endblock %}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>{% block title %}{% endblock %}</title>
+      <link rel="stylesheet" type="text/css" href="{% static 'css/mySidebar.css' %}" />
+      <style>
+         .li-text {
+            font-family: "Titillium Web", sans-serif;
+            font-size: 14px;
+            color: white;
+            margin-top: 0px;
+            padding-top: 0px;
+         }
+      </style>
+   </head>
+
+   <body>
+      <div class="container">
+         <nav class="main-menu" id="main-menu">
+            <div class="content-head" id="content-head">
+               <img src="{% static 'images/bird.jpg' %}" alt="bird" class="logo-nav" />
+            </div>
+            <ul id="listUL">
+               <li id="li1">
+                  <a href="{% url 'home' %}">
+                     <!-- <i class="fa fa-home fa-2x"></i> -->
+                     <img src="{% static 'images/home.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> Home </span>
+                  </a>
+               </li>
+               <li id="li2">
+                  <a href="{% url 'customConfirm' %}">
+                     <img src="{% static 'images/computer.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> Custom Confirm </span>
+                  </a>
+               </li>
+               <li id="li3">
+                  <a href="{% url 'list' %}">
+                     <img src="{% static 'images/dashboard.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> Student list </span>
+                  </a>
+               </li>
+               <li id="li4">
+                  <a href="{% url 'temp' %}">
+                     <img src="{% static 'images/folder.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> Test page </span>
+                  </a>
+               </li>
+               <li id="li5">
+                  <a href="#">
+                     <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> AJAX và Fetch API </span>
+                  </a>
+                  <ul class="dropdown">
+                     <li id="li51">
+                        <a href="{% url 'ajax_update' %}">
+                           <img src="{% static 'images/dashboard.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Ajax Update </span>
+                        </a>
+                     </li>
+                     <li id="li52">
+                        <a href="{% url 'ajax_create' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Ajax Create </span>
+                        </a>
+                     </li>
+                     <li id="li53">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Chưa làm </span>
+                        </a>
+                     </li>
+                     <li id="li54">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Chưa làm </span>
+                        </a>
+                     </li>
+                     <li id="li55">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Chưa làm </span>
+                        </a>
+                     </li>
+                  </ul>
+               </li>
+               <li id="li6">
+                  <a href="#">
+                     <img src="{% static 'images/folder.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> Sử dụng ModelForm </span>
+                  </a>
+                  <ul class="dropdown">
+                     <li id="li61">
+                        <a href="{% url 'profile_get_by_id' %}">
+                           <img src="{% static 'images/dashboard.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> ModelForm Edit </span>
+                        </a>
+                     </li>
+                     <li id="li62">
+                        <a href="{% url 'profile_ModelForm_create' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> ModelForm Create </span>
+                        </a>
+                     </li>
+                  </ul>
+               </li>
+               <li id="li7">
+                  <a href="#">
+                     <img src="{% static 'images/database.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> ViewSet và Router </span>
+                     <img src="{% static 'images/arrow-down.png' %}" alt="image" class="fa fa-down" />
+                  </a>
+                  <ul class="dropdown">
+                     <li id="li11">
+                        <a href="{% url 'profiles_list' %}">
+                           <img src="{% static 'images/dashboard.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> List of Employee </span>
+                        </a>
+                     </li>
+                     <li>
+                        <a href="{% url 'profiles_call_profile_create' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Create Employee </span>
+                        </a>
+                     </li>
+                     <li id="li12">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Edit Employee </span>
+                        </a>
+                     </li>
+                     <li id="li13">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Delete Employee </span>
+                        </a>
+                     </li>
+                     <li id="li14">
+                        <a href="{% url 'profiles_call_view_update' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Update Employee </span>
+                        </a>
+                     </li>
+                  </ul>
+               </li>
+
+               <li>
+                  <a href="{% url 'temp' %}">
+                     <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                     <span class="nav-text"> Students </span>
+                     <img src="{% static 'images/arrow-down.png' %}" alt="image" class="fa fa-down" />
+                  </a>
+                  <ul class="dropdown">
+                     <li id="li11">
+                        <a href="{% url 'list' %}">
+                           <img src="{% static 'images/dashboard.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> List of students </span>
+                        </a>
+                     </li>
+                     <li>
+                        <a href="{% url 'create' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Create student </span>
+                        </a>
+                     </li>
+                     <li id="li12">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Edit student </span>
+                        </a>
+                     </li>
+                     <li id="li13">
+                        <a href="{% url 'notification' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Delete student </span>
+                        </a>
+                     </li>
+                     <li id="li14">
+                        <a href="{% url 'update' %}">
+                           <img src="{% static 'images/graph.png' %}" alt="image" class="fa" />
+                           <span class="nav-text"> Update student </span>
+                        </a>
+                     </li>
+                  </ul>
+               </li>
+            </ul>
+
+            <ul class="logout">
+               <li>
+                  <form method="POST" action="{% url 'logout' %}" style="display: inline">
+                     {% csrf_token %}
+                     <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer">
+                        <div class="flex-li">
+                           <img src="{% static 'images/power-off.png' %}" alt="image" class="fa" />
+                           <span class="li-text">Logout</span>
+                        </div>
+                     </button>
+                  </form>
+               </li>
+            </ul>
+         </nav>
+         <div class="right-content">{% block content %} {% endblock %}</div>
+      </div>
+
+      <script type="text/JavaScript" src="{% static 'js/sidebar.js' %}"></script>
+   </body>
+</html>

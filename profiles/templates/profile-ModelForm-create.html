@@ -1,0 +1,38 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} Form edit {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+
+<h1>Sử dụng ModelForm</h1>
+<p>I'm testing ModelForm</p>
+
+<form method="post">
+   {% csrf_token %}
+   <div class="flex-col">
+      {% for field in form %}
+      <div class="form" style="width: 250px; height: 40px">
+         {{ field }}
+         <label for="{{ field.id_for_label }}" class="form__label">{{ field.label }}</label>
+      </div>
+      {% endfor %}
+   </div>
+   <button type="submit" name="welcome" value="Welcome" style="width: 120px; height: 39px" class="btn-like">Cập nhật</button>
+</form>
+<script>
+   inputs = document.querySelectorAll('input[type="date"]');
+   inputs.forEach((e) => {
+      e.value = setTodayToInput();
+   });
+
+   function setTodayToInput() {
+      const today = new Date();
+      // Lấy dd/mm/yyyy (nếu bạn cần dùng lại)
+      const dd = String(today.getDate()).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const yyyy = today.getFullYear();
+      // const ddmmyyyy = `${dd}/${mm}/${yyyy}`;
+      const inputDate = `${yyyy}-${mm}-${dd}`;
+      return inputDate;
+   }
+</script>
+{% endblock %}

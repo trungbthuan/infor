@@ -1,0 +1,74 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} Form edit {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+
+<h1>Cập nhật thông tin</h1>
+<p>I'm testing form edit</p>
+
+<form method="POST" action="{% url 'put' id=student.id %}">
+   {% csrf_token %}
+   <p>Debug: {{ student.birthday }}</p>
+   <div class="flex-col">
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="full_name" type="text" id="full_name" class="form__input" autocomplete="off" placeholder=" " value="{{ student.full_name }}" />
+         <label for="full_name" class="form__label">Họ tên</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="birthday" type="date" id="birthday" class="form__input" required value="{{ student.birthday|date:'Y-m-d' }}" placeholder=" " />
+         <label for="birthday" class="form__label">Ngày sinh</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="sex" type="text" id="sex" class="form__input" autocomplete="off" placeholder=" " value="{{ student.sex }}" />
+         <label for="sex" class="form__label">Giới tính</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="class_name" type="text" id="class_name" class="form__input" autocomplete="off" placeholder=" " value="{{ student.class_name }}" />
+         <label for="class_name" class="form__label">Lớp</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="average" type="text" id="average" class="form__input" autocomplete="off" placeholder=" " value="{{ student.average }}" />
+         <label for="average" class="form__label">Điểm trung bình</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="morality" type="text" id="morality" class="form__input" autocomplete="off" placeholder=" " value="{{ student.morality }}" />
+         <label for="morality" class="form__label">Đạo đức</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="performance" type="text" id="performance" class="form__input" autocomplete="off" placeholder=" " value="{{ student.performance }}" />
+         <label for="performance" class="form__label">Học lực</label>
+      </div>
+      <button type="submit" name="welcome" value="Welcome" style="width: 120px; height: 39px" class="btn-like">Cập nhật</button>
+   </div>
+</form>
+
+<script>
+   //document.getElementById("birthday").value = new Date("{{student.birthday}}");
+   // Format ngày từ value dd/mm/yyyy  → (Y-m-d)
+   function dateDefault(date_value) {
+      if (!date_value) return "";
+      const date = new Date(date_value);
+      if (isNaN(date.getTime())) return "";
+      return date.toISOString().split("T")[0]; // chuẩn YYYY-MM-DD
+   }
+
+   const str = document.getElementById("birthday").value;
+   console.log("Giá trị ngày: ", str);
+
+   // Format ngày từ value (Y-m-d) → dd/mm/yyyy
+   function updateDisplay(date_value) {
+      const textContent = "";
+      if (date_value) {
+         const date = new Date(date_value);
+         const day = String(date.getDate()).padStart(2, "0");
+         const month = String(date.getMonth() + 1).padStart(2, "0");
+         const year = date.getFullYear();
+         textContent = `${day}/${month}/${year}`;
+      } else {
+         textContent = "NaN";
+      }
+      return textContent;
+   }
+</script>
+
+{% endblock %}

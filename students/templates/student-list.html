@@ -1,0 +1,71 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} This is
+students page {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myTable.css' %}" />
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+
+{% csrf_token %}
+<h1>Danh sách thông tin sinh viên</h1>
+
+<table id="table" class="styled-table">
+  <thead>
+    <tr>
+      <th>Stt</th>
+      <th>Id</th>
+      <th>Full Name</th>
+      <th>Birthday</th>
+      <th>Sex</th>
+      <th>Class Name</th>
+      <th>Aaverage</th>
+      <th>Morality</th>
+      <th>Performance</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stu in students %}
+    <tr>
+      <td></td>
+      <td>{{stu.id}}</td>
+      <td>{{stu.full_name}}</td>
+      <td>{{stu.birthday}}</td>
+      <td>{{stu.sex}}</td>
+      <td>{{stu.class_name}}</td>
+      <td>{{stu.average}}</td>
+      <td>{{stu.morality}}</td>
+      <td>{{stu.performance}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  let table = document.getElementById("table");
+
+  for (let i = 1; i <= table.rows.length; i++) {
+    table.rows[i].cells[0].innerHTML = zeroPad(i.toString(), 2, "0");
+    table.rows[i].cells[3].innerHTML = formatDateVN(new Date(table.rows[i].cells[3].innerHTML));
+  }
+
+  function zeroPad(numberStr, padStart, char) {
+    return numberStr.padStart(padStart, char);
+  }
+
+  function formatDateVN(strDate) {
+    let curDay = strDate.getDate();
+    let curMonth = strDate.getMonth() + 1;
+    let curYear = strDate.getFullYear();
+
+    function checkDayMonth(i) {
+      if (i < 10) {
+        i = "0" + i;
+      }
+      return i;
+    }
+
+    return (
+      checkDayMonth(curDay) + "/" + checkDayMonth(curMonth) + "/" + curYear
+    );
+  }
+</script>
+
+{% endblock %}

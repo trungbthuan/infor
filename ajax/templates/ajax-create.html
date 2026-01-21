@@ -1,0 +1,205 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} Form edit {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+
+<h1>Thêm mới hồ sơ nhân viên</h1>
+<p>I'm testing create form</p>
+
+<form method="POST" action="{% url 'profiles_create' %}">
+   {% csrf_token %}
+
+   <div class="flex-col">
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="full_name" type="text" id="full_name" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.full_name }}" />
+         <label for="full_name" class="form__label">Họ tên</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="birthday" type="date" id="birthday" class="form__input" required value="{{ profile.birthday|date:'Y-m-d' }}" placeholder=" " />
+         <label for="birthday" class="form__label">Ngày sinh</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <select name="sex" id="sex" class="form__input" style="padding-top: 8px" required>
+            <option value="" selected>-- Chọn giới tính --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+         </select>
+         <label for="sex" class="form__label">Giới tính</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="birth_place" type="text" id="birth_place" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.birth_place }}" />
+         <label for="birth_place" class="form__label">Nơi sinh</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="nation" type="text" id="nation" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.nation }}" />
+         <label for="nation" class="form__label">Dân tộc</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="recruitment_day" type="date" id="recruitment_day" class="form__input" required value="{{ profile.recruitment_day|date:'Y-m-d' }}" placeholder=" " />
+         <label for="recruitment_day" class="form__label">Ngày vào làm</label>
+      </div>
+
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="job_title" type="text" id="job_title" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.job_title }}" />
+         <label for="job_title" class="form__label">Công việc</label>
+      </div>
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="department" type="text" id="department" class="form__input" autocomplete="off" placeholder=" " value="{{ profile.department }}" />
+         <label for="department" class="form__label">Phòng/ban</label>
+      </div>
+      <button type="button" name="btn_create" id="btn_create" style="width: 120px; height: 39px" class="btn-like" onclick="ajaxCreate()">Tạo hồ sơ mới</button>
+   </div>
+</form>
+<script>
+   function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+         const cookies = document.cookie.split(";");
+         for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+               cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+               break;
+            }
+         }
+      }
+      return cookieValue;
+   }
+
+   // Khai báo biến cần thiết
+   const csrftoken = getCookie("csrftoken");
+
+   document.addEventListener("DOMContentLoaded", (event) => {
+      const form = document.querySelector("form");
+      // Lấy tất cả input, select, và button theo thứ tự
+      const focusableElements = form.querySelectorAll('.form__input, select, button[type="submit"]');
+      const elements = Array.from(focusableElements);
+
+      if (elements.length > 0) {
+         elements[0].focus();
+      }
+
+      // Hàm chuyển focus đến phần tử tiếp theo
+      const focusNextElement = (currentIndex) => {
+         let nextIndex = (currentIndex + 1) % elements.length;
+         if (nextIndex >= 0 && nextIndex < elements.length) {
+            elements[nextIndex].focus();
+         }
+      };
+
+      // --- 1. Xử lý chuyển focus khi giá trị SELECT thay đổi (Change Event) ---
+      // SỰ KIỆN NÀY LÀ CHÌA KHÓA: Đảm bảo chuyển focus CHỈ sau khi người dùng chọn xong.
+      elements.forEach((el) => {
+         if (el.tagName === "SELECT") {
+            el.addEventListener("change", () => {
+               // Sau khi chọn xong, kiểm tra tính hợp lệ và chuyển focus
+               if (el.checkValidity()) {
+                  let currentIndex = elements.indexOf(el);
+                  focusNextElement(currentIndex);
+               }
+            });
+         }
+      });
+      // ---------------------------------------------------------------------
+
+      // --- 2. Xử lý sự kiện keydown (Chuyển focus bằng Enter) ---
+      form.addEventListener("keydown", (e) => {
+         if (e.key === "Enter" || e.keyCode === 13) {
+            const currentElement = document.activeElement;
+
+            // A. Nếu là nút Submit: Cho phép submit form
+            if (currentElement.type === "submit") {
+               return true;
+            }
+
+            // B. Nếu là thẻ SELECT: ƯU TIÊN hành vi mặc định
+            if (currentElement.tagName === "SELECT") {
+               // Nếu là required và trống, ta hiển thị lỗi nhưng vẫn cho Enter hoạt động
+               if (currentElement.hasAttribute("required") && !currentElement.checkValidity()) {
+                  // Vẫn chặn submit nếu trống, nhưng không chặn keydown hoàn toàn
+                  // Chúng ta chỉ cần hiển thị lỗi và cho Enter MỞ dropdown.
+                  currentElement.reportValidity();
+               }
+               // KHÔNG GỌI e.preventDefault() ở đây. Cho phép Enter mở dropdown.
+               return;
+            }
+
+            // C. Xử lý INPUT (Kiểm tra bắt buộc và chuyển focus)
+
+            // Ngăn chặn hành động mặc định ngay lập tức cho các input
+            e.preventDefault();
+
+            // 1. Kiểm tra tính hợp lệ của Input (nếu là required)
+            if (currentElement.hasAttribute("required") && !currentElement.checkValidity()) {
+               currentElement.reportValidity();
+               return; // Giữ focus nếu trống
+            }
+
+            // 2. Nếu Input hợp lệ: Chuyển focus
+            let currentIndex = elements.indexOf(currentElement);
+            focusNextElement(currentIndex);
+         }
+      });
+   });
+   //document.getElementById("birthday").value = setTodayToInput();
+   //document.getElementById("recruitment_day").value = setTodayToInput();
+   inputs = document.querySelectorAll('input[type="date"]');
+   inputs.forEach((e) => {
+      e.value = setTodayToInput();
+   });
+
+   function setTodayToInput() {
+      const today = new Date();
+      // Lấy dd/mm/yyyy (nếu bạn cần dùng lại)
+      const dd = String(today.getDate()).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const yyyy = today.getFullYear();
+      // const ddmmyyyy = `${dd}/${mm}/${yyyy}`;
+      const inputDate = `${yyyy}-${mm}-${dd}`;
+      return inputDate;
+   }
+
+   function ajaxCreate() {
+      const apiUrl = "http://127.0.0.1:8080/api/profile/";
+      const newData = {
+         full_name: document.getElementById("full_name").value,
+         birthday: document.getElementById("birthday").value,
+         sex: document.getElementById("sex").value,
+         birth_place: document.getElementById("birth_place").value,
+         nation: document.getElementById("nation").value,
+         recruitment_day: document.getElementById("recruitment_day").value,
+         job_title: document.getElementById("job_title").value,
+         department: document.getElementById("department").value,
+      };
+      fetch(apiUrl, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+         },
+         body: JSON.stringify(newData),
+      })
+         .then((response) => {
+            if (!response.ok) {
+               return response.json().then((errorData) => {
+                  // Ném lỗi với chi tiết từ server
+                  throw new Error(JSON.stringify(errorData));
+               });
+            }
+            return response.json();
+         })
+         .then((newProfile) => {
+            // Dữ liệu JSON đã chuyển đổi được gán cho updatedProfile
+            alert(`Cập nhật hồ sơ ${newProfile.full_name} thành công!`);
+            // CHUYỂN HƯỚNG: Trở lại trang danh sách sau khi lưu thành công
+            window.location.href = "{% url 'ajax_update' %}";
+         })
+         .catch((error) => {
+            console.error("Lỗi khi cập nhật:", error);
+            // Hiển thị lỗi thân thiện hơn
+            alert("Cập nhật thất bại: " + error.message);
+         });
+   }
+</script>
+
+{% endblock %}

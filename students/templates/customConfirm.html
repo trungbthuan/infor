@@ -1,0 +1,146 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} Form edit {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/customConfirm.css' %}" />
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+
+<h1>Tự tạo hàm CustomConfirm</h1>
+<p>I'm testing form CustomConfirm</p>
+
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <p id="confirm-message">
+      Bạn có chắc chắn muốn thực hiện hành động này không?
+    </p>
+    <div class="modal-actions flex-row-end">
+      <button id="btnConfirmYes" class="btn btn-primary">Đồng ý</button>
+      <button id="btnConfirmNo" class="btn btn-secondary">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<button id="openModalBtn" class="btn btn-primary">Test CustomConfirm</button>
+
+<br />
+<!-- Button do anything -->
+<p>I'm testing Button call another</p>
+<input
+  type="button"
+  class="btn btn-primary"
+  value="Call Django World"
+  onclick="callDjangoView()"
+/>
+
+<br />
+<p>I'm testing Button call another template</p>
+<input
+  type="button"
+  class="btn btn-primary"
+  value="Call another template"
+  onclick="callAnotherTemplate()"
+/>
+
+<script>
+  //Button call another template
+  function callAnotherTemplate() {
+    const url = "{% url 'callAnotherTemplate' %}";
+    // 2. Thực hiện chuyển hướng (Redirection)
+    // Trình duyệt sẽ tải trang mới từ URL này
+    window.location.href = url;
+  }
+
+  //Button Call Django View
+  function callDjangoView() {
+    const url = "{% url 'do_anything' %}";
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Phản hồi từ Django:", data);
+        if (data.status === "success") {
+          alert('Thành công! Kiểm tra console server để thấy "Hello world".');
+        }
+      })
+      .catch((error) => {
+        // 3. Xử lý lỗi (lỗi kết nối, lỗi server)
+        console.error("Lỗi khi gọi Django View:", error);
+        alert("Có lỗi xảy ra khi gọi server.");
+      });
+  }
+
+  // Lấy các phần tử DOM
+  const confirmModal = document.getElementById("confirmModal");
+  const confirmMessage = document.getElementById("confirm-message");
+  const btnYes = document.getElementById("btnConfirmYes");
+  const btnNo = document.getElementById("btnConfirmNo");
+
+  /**
+   * Hiển thị một modal xác nhận và trả về một Promise.
+   * @param {string} message - Thông báo muốn hiển thị trong modal.
+   * @returns {Promise<boolean>} - Trả về true nếu Đồng ý, false nếu Hủy.
+   */
+  function customConfirm(message) {
+    // Đặt thông báo
+    confirmMessage.textContent = message;
+
+    // Hiển thị modal
+    confirmModal.style.display = "block";
+
+    // Trả về một Promise, code sẽ chờ ở đây
+    return new Promise((resolve) => {
+      // Hàm đóng modal và resolve Promise
+      const closeAndResolve = (result) => {
+        confirmModal.style.display = "none";
+        // Giải quyết (resolve) Promise với kết quả true/false
+        resolve(result);
+
+        // Xóa các Listener sau khi dùng để tránh lỗi lặp
+        btnYes.onclick = null;
+        btnNo.onclick = null;
+      };
+
+      // Gán sự kiện cho nút "Đồng ý"
+      btnYes.onclick = () => closeAndResolve(true);
+
+      // Gán sự kiện cho nút "Hủy"
+      btnNo.onclick = () => closeAndResolve(false);
+
+      // Xử lý đóng khi bấm ESC (Tùy chọn)
+      window.onkeydown = (event) => {
+        if (event.key === "Escape") {
+          closeAndResolve(false);
+        }
+      };
+    });
+  }
+
+  // ----------------------------------------------------------------
+  // CÁCH SỬ DỤNG HÀM MỚI (PHẢI DÙNG ASYNC/AWAIT)
+  // ----------------------------------------------------------------
+
+  async function handleClickDelete(mess) {
+    const isConfirmed = await customConfirm(mess);
+    //  "Bạn có thực sự muốn xóa dữ liệu này không?"
+    //);
+
+    // Code chỉ chạy tiếp sau khi người dùng đã tương tác với modal
+    if (isConfirmed) {
+      console.log("Người dùng đã đồng ý! Thực hiện xóa...");
+      alert("Đã xóa!");
+    } else {
+      console.log("Người dùng đã hủy.");
+      alert("Đã hủy thao tác.");
+    }
+  }
+
+  // Ví dụ: Gán hàm vào một nút
+  document.getElementById("openModalBtn").onclick = () => {
+    // Chỉ gọi hàm handleClickDelete khi nút được click
+    handleClickDelete("Bạn có thực sự muốn xóa dữ liệu này không?");
+  };
+</script>
+
+{% endblock %}

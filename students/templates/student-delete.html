@@ -1,0 +1,20 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} Form delete {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+{% csrf_token %}
+<h1>This is form delete</h1>
+<p>I'm testing form delete</p>
+
+<p>{{student.id}}</p>
+<p>{{student.full_name}}</p>
+<p>{{student.birthday}}</p>
+<p>{{student.sex}}</p>
+<p>{{student.class_name}}</p>
+<p>{{student.average}}</p>
+<p>{{student.morality}}</p>
+<p>{{student.performance}}</p>
+
+<script></script>
+
+{% endblock %}

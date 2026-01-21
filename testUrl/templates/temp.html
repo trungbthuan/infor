@@ -1,0 +1,132 @@
+{% extends "sidebar.html" %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+   <body>
+      {% block title %} This is first page {% endblock %} {% block content %}
+      <link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+      <link rel="stylesheet" href="{% static 'css/selectOption.css' %}" />
+      <link rel="stylesheet" href="{% static 'css/datePicker.css' %}" />
+      <link rel="stylesheet" href="{% static 'css/popups.css' %}" />
+      <link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+
+      <script type="text/JavaScript" src="{% static 'js/datePicker.js' %}"></script>
+      <script type="text/JavaScript" src="{% static 'js/datePicker.js' %}"></script>
+      <h1>This is temp form</h1>
+      <div class="flex-col">
+         <div class="selectdiv">
+            <label>
+               <select id="choose-option_id" onchange="chooseOption(event)">
+                  <option selected>Select Option</option>
+                  <option value="value01">Option 1</option>
+                  <option value="value02">Option 2</option>
+                  <option value="value03">Option 3</option>
+                  <option value="value04">Option 4</option>
+               </select>
+            </label>
+         </div>
+         <div>
+            <p style="color: red; font-weight: bold" id="show_message" onclick="click_me()"></p>
+         </div>
+
+         {% comment %}
+         <div>
+            <label>Date</label>
+            <input type="date" id="datePicker1" onchange="myDatePicker()" />
+         </div>
+         {% endcomment %}
+
+         <br />
+         <div class="date-input-container">
+            <input type="date" id="datePicker" />
+            <span class="custom-calendar-icon">📅</span>
+         </div>
+
+         <br />
+         <div>
+            <div id="myModal" class="modal">
+               <div class="modal-content">
+                  <span class="close-button">&times;</span>
+                  <p id="modal-message">Nội dung thông báo tùy chỉnh sẽ ở đây.</p>
+                  <button id="modal-confirm">Đã hiểu</button>
+               </div>
+            </div>
+            <button id="openModalBtn" style="width: 120px; height: 35px" class="btn-like">Mở Popup</button>
+         </div>
+
+         <br />
+      </div>
+
+      <script>
+         //Phần popups
+         var modal = document.getElementById("myModal");
+         var btn = document.getElementById("openModalBtn");
+         var closeButton = document.querySelector(".close-button");
+         var confirmButton = document.getElementById("modal-confirm");
+         var messageElement = document.getElementById("modal-message");
+
+         function showPopup(message) {
+            // 1. Cập nhật nội dung
+            messageElement.innerHTML = message;
+
+            // 2. Hiển thị Popup (thay đổi CSS display)
+            modal.style.display = "block";
+         }
+
+         // --- Các hàm đóng Popup ---
+
+         // 1. Đóng khi click nút X
+         closeButton.onclick = function () {
+            modal.style.display = "none";
+         };
+
+         // 2. Đóng khi click nút 'Đã hiểu'
+         confirmButton.onclick = function () {
+            modal.style.display = "none";
+         };
+
+         // 3. Đóng khi click ra ngoài Popup (trên nền mờ)
+         window.onclick = function (event) {
+            if (event.target == modal) {
+               modal.style.display = "none";
+            }
+         };
+
+         // --- Ví dụ sử dụng ---
+         btn.onclick = function () {
+            showPopup("Bạn đã click nút! Đây là thông báo thay cho alert().");
+         };
+         // Hết phần popups
+
+         // Phần DatePicker
+         document.getElementById("datePicker1").value = toDay();
+         document.getElementById("datePicker").value = toDay();
+
+         function myDatePicker() {
+            var d = changeDateFormat(document.getElementById("datePicker").value);
+            alert(d);
+         }
+
+         function chooseOption(event) {
+            // Lấy phần tử <p> để hiển thị thông báo
+            var messageElement = document.getElementById("show_message");
+
+            var selectElement = event.target;
+            // 1. Lấy giá trị của thuộc tính 'value' (value01, value02,...)
+            var value = selectElement.value;
+            // 2. Lấy chỉ mục (vị trí) của tùy chọn được chọn
+            var selectedIndex = selectElement.selectedIndex;
+            // 3. Dùng chỉ mục để truy cập vào tùy chọn trong mảng 'options' và lấy .text
+            var value2 = selectElement.options[selectedIndex].text;
+
+            if (selectedIndex === 0) {
+               messageElement.innerHTML = "Vui lòng chọn một tùy chọn hợp lệ.";
+            } else {
+               messageElement.innerHTML = "🎉 Bạn đã chọn: **" + value2 + "** (Giá trị: " + value + ")";
+            }
+         }
+      </script>
+
+      {% endblock %}
+   </body>
+</html>

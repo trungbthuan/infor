@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<script>
+   document.addEventListener("DOMContentLoaded", (event) => {
+      const form = document.querySelector("form");
+      // Lấy tất cả input, select, và button theo thứ tự
+      const focusableElements = form.querySelectorAll('.form__input, select, button[type="submit"]');
+      const elements = Array.from(focusableElements);
+
+      if (elements.length > 0) {
+         elements[0].focus();
+      }
+
+      // --- BỔ SUNG: Xử lý chuyển focus khi giá trị SELECT thay đổi (dùng Enter hoặc chuột) ---
+      elements.forEach((el) => {
+         if (el.tagName === "SELECT") {
+            el.addEventListener("change", () => {
+               // Khi người dùng chọn xong giá trị (sự kiện change kích hoạt),
+               // Tự động chuyển focus sang phần tử tiếp theo
+               let currentIndex = elements.indexOf(el);
+               let nextIndex = (currentIndex + 1) % elements.length;
+
+               if (nextIndex >= 0 && nextIndex < elements.length) {
+                  elements[nextIndex].focus();
+               }
+            });
+         }
+      });
+      // -----------------------------------------------------------------------------------
+
+      // --- Xử lý sự kiện keydown (Chỉ cho INPUT và SUBMIT) ---
+      form.addEventListener("keydown", (e) => {
+         if (e.key === "Enter" || e.keyCode === 13) {
+            const currentElement = document.activeElement;
+
+            // 1. Nếu là nút Submit: Cho phép submit form
+            if (currentElement.type === "submit") {
+               return true;
+            }
+
+            // 2. Nếu là thẻ SELECT: KHÔNG LÀM GÌ CẢ.
+            // Cho phép hành vi mặc định của trình duyệt để người dùng chọn option.
+            if (currentElement.tagName === "SELECT") {
+               // Trình duyệt sẽ tự mở/đóng danh sách và người dùng sẽ chọn bằng Mũi tên.
+               // Sự kiện 'change' ở trên sẽ lo việc chuyển focus sau khi chọn xong.
+               return;
+            }
+
+            // 3. Nếu là INPUT (hoặc các phần tử khác): Chuyển focus
+            e.preventDefault();
+
+            let currentIndex = elements.indexOf(currentElement);
+            let nextIndex = (currentIndex + 1) % elements.length;
+
+            if (nextIndex >= 0 && nextIndex < elements.length) {
+               elements[nextIndex].focus();
+            }
+         }
+      });
+   });
+</script>

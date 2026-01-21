@@ -1,0 +1,91 @@
+{% extends "sidebar.html" %} {% load static %} {% block title %} This is students page {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/myTable.css' %}" />
+<link rel="stylesheet" href="{% static 'css/myStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/inputStyle.css' %}" />
+<link rel="stylesheet" href="{% static 'css/btnStyle.css' %}" />
+
+{% block extra_css %}{% endblock %}
+
+<form method="GET" action="{% url 'profiles_search_name' %}">
+   <div class="flex-row" style="margin: 10px">
+      <div class="form" style="width: 250px; height: 40px">
+         <input name="search_fields" type="text" id="search_fields" class="form__input" autocomplete="off" placeholder=" " />
+         <label for="search_fields" class="form__label">Tên sinh viên</label>
+      </div>
+      <button id="btn_find" style="width: 120px; height: 39px" class="btn-like" onclick="show()">Tìm kiếm</button>
+   </div>
+</form>
+
+<table id="table" class="styled-table">
+   <thead>
+      <tr>
+         <th>Stt</th>
+         <th>Id</th>
+         <th>Full Name</th>
+         <th>Birthday</th>
+         <th>Sex</th>
+         <th>Birth place</th>
+         <th>Nation</th>
+         <th>Recruitment day</th>
+         <th>Job title</th>
+         <th>Department</th>
+         <th>Action</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for profile in profiles %}
+      <tr>
+         <td></td>
+         <td>{{profile.id}}</td>
+         <td>{{profile.full_name}}</td>
+         <td>{{profile.birthday}}</td>
+         <td>{{profile.sex}}</td>
+         <td>{{profile.birth_place}}</td>
+         <td>{{profile.nation}}</td>
+         <td>{{profile.recruitment_day}}</td>
+         <td>{{profile.job_title}}</td>
+         <td>{{profile.department}}</td>
+         <td>
+            <div class="flex-row">
+               <a href="{% url 'profiles_call_view_edit' id=profile.id %}" class="cir-button bg-edit"></a>
+               {% comment %} <a href="{% url 'profiles_delete_by_id' id=profile.id %}" class="cir-button bg-delete" style="margin-left: 5px"></a> {% endcomment %}
+               <form method="POST" action="{% url 'profiles_delete_by_id' id=profile.id %}" style="display: inline">
+                  {% csrf_token %}
+
+                  <button type="submit" class="cir-button bg-delete" style="margin-left: 5px" onclick="return confirm('Bạn có chắc chắn muốn xóa hồ sơ {{ profile.full_name }} không?');"></button>
+               </form>
+            </div>
+         </td>
+      </tr>
+      {% endfor %}
+   </tbody>
+</table>
+<script>
+   let table = document.getElementById("table");
+
+   for (let i = 1; i <= table.rows.length; i++) {
+      table.rows[i].cells[0].innerHTML = zeroPad(i.toString(), 2, "0");
+      table.rows[i].cells[3].innerHTML = formatDateVN(new Date(table.rows[i].cells[3].innerHTML));
+   }
+
+   function zeroPad(numberStr, padStart, char) {
+      return numberStr.padStart(padStart, char);
+   }
+
+   function formatDateVN(strDate) {
+      let curDay = strDate.getDate();
+      let curMonth = strDate.getMonth() + 1;
+      let curYear = strDate.getFullYear();
+
+      function checkDayMonth(i) {
+         if (i < 10) {
+            i = "0" + i;
+         }
+         return i;
+      }
+
+      return checkDayMonth(curDay) + "/" + checkDayMonth(curMonth) + "/" + curYear;
+   }
+</script>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+3. Áp dụng Quyền truy cập (Permissions)
+Hiện tại, bạn đang dùng @permission_classes([AllowAny]), nghĩa là bất kỳ ai cũng có thể thêm, sửa, xóa dữ liệu.
+
+Giải pháp: Triển khai Permissions (ví dụ: chỉ người dùng đã đăng nhập mới được thêm/sửa/xóa).
+
+Python
+
+from rest_framework.permissions import IsAuthenticated
+
+@permission_classes([IsAuthenticated]) 
+def students_post(request):
+    # ... chỉ cho phép người dùng đã xác thực (logged in)
+Lợi ích: Bảo mật ứng dụng của bạn, chỉ cho phép những người dùng có thẩm quyền thao tác với dữ liệu quan trọng.
+
+Hãy chọn một trong ba chủ đề trên để chúng ta tiếp tục đi sâu vào tìm hiểu nhé!
