@@ -27,7 +27,8 @@ os.environ["DJANGO_RUNSERVER_HIDE_WARNING"] = "true"
 SECRET_KEY = 'django-insecure-gmq5ie-9v1hplg)p8))j(@u$)lrhm#-s7xnk-x8xqom!*pn+tj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Tắt DEBUG khi deploy để bảo mật
+DEBUG = False
 
 ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['infor-0cgw.onrender.com', 'localhost', '127.0.0.1']
@@ -61,6 +62,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
