@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-gmq5ie-9v1hplg)p8))j(@u$)lrhm#-s7xnk-x8xqom!*pn+tj
 DEBUG = True
 
 ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['TRUNGND-LD-1.spc1.evnspc.vn', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['infor-0cgw.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -55,7 +55,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
         # Thêm SearchFilter của DRF vào đây để hỗ trợ LIKE
-        'rest_framework.filters.SearchFilter', 
+        'rest_framework.filters.SearchFilter',
     )
 }
 
@@ -74,7 +74,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        #'DIRS': [],
+        # 'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,14 +144,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#LOGIN_URL='/admin/'
+# LOGIN_URL='/admin/'
 
 # URL để chuyển hướng người dùng đến khi họ cố gắng truy cập một trang được bảo vệ (BẮT BUỘC)
-LOGIN_URL = '/login/' 
+LOGIN_URL = '/login/'
 
 # URL để chuyển hướng người dùng đến sau khi đăng nhập thành công (Thường là trang Dashboard/Home)
-LOGIN_REDIRECT_URL = '/test/temp/' # Thay bằng URL của form bạn tạo
+LOGIN_REDIRECT_URL = '/test/temp/'  # Thay bằng URL của form bạn tạo
 
 # URL để chuyển hướng người dùng đến sau khi đăng xuất
 LOGOUT_REDIRECT_URL = '/test/home/'
-
