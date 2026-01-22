@@ -131,9 +131,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = '/static/'
 
 # Nơi chứa các file tĩnh gốc của bạn (nếu bạn để trong thư mục mysite/static)
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "mysite", "static"),
-]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Nơi Render sẽ gom file vào (nên đặt tên khác với STATICFILES_DIRS)
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
