@@ -86,10 +86,15 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Nếu có PostgreSQL thì dùng, không thì dùng SQLite
 DATABASES = {
     'default': dj_database_url.config(
+        # Nếu có biến DATABASE_URL thì dùng, không thì mới dùng SQLite
         default=f'sqlite:///{os.path.join(BASE_DIR, "db.sqlite3")}',
         conn_max_age=600
     )
 }
+
+# Thêm đoạn này để kiểm tra xem Render có nhận được biến không
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
