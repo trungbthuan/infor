@@ -1,0 +1,121 @@
+﻿Deploy python project lên github
+Không thể deploy trực tiếp để chạy code Python trên GitHub Pages, 
+nhưng bạn hoàn toàn có thể deploy miễn phí bằng cách kết hợp GitHub với các nền tảng hỗ trợ Python khác
+
+Hướng dẫn nhanh cách deploy với Render (Phổ biến nhất)
+Chuẩn bị file: Đảm bảo project có file requirements.txt (liệt kê các thư viện) và một file chạy chính (ví dụ main.py).
+
+Đẩy code lên GitHub: Tạo một repository và push toàn bộ code lên đó.
+
+Kết nối với Render:
+1. Truy cập render.com và đăng nhập bằng tài khoản GitHub.
+2. Chọn New > Web Service.
+3. Chọn Repository bạn vừa tạo.
+4. Ở phần Start Command, nhập lệnh để chạy app (ví dụ: gunicorn main:app).
+5. Nhấn Deploy.
+
+Để deploy một Web Service
+Bước 1: Chuẩn bị Project: Trong thư mục gốc của project, bạn phải có ít nhất 2 file:
+1. requirements.txt: Chứa danh sách thư viện (ví dụ: flask, gunicorn, pandas). Bạn tạo file này bằng lệnh: pip freeze > requirements.txt
+2. gunicorn:Hãy thêm gunicorn vào file requirements.txt.
+3. Trong file settings.py:
+# 1. Tắt DEBUG khi deploy để bảo mật
+DEBUG = False
+# Đảm bảo BASE_DIR đã được định nghĩa ở đầu file settings.py
+BASE_DIR = Path(__file__).resolve().parent.parent
+# Đây là đường dẫn ảo trên trình duyệt
+STATIC_URL = '/static/'
+# Nơi chứa các file tĩnh gốc của bạn (nếu bạn để trong thư mục mysite/static)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "mysite", "static"),
+]
+# Nơi Render sẽ gom file vào (nên đặt tên khác với TATICFILES_DIRS)
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# Thêm cấu hình nén file tĩnh để web chạy nhanh hơn STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+4. Cài đặt thư viện WhiteNoise: Đây là thư viện tiêu chuẩn giúp ứng dụng Django đọc các file tĩnh trên Render.
+* Thêm whitenoise vào file requirements.txt của bạn.
+* Mở file settings.py và thêm WhiteNoise vào ngay phía sau SecurityMiddleware trong mục MIDDLEWARE:
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # ... các middleware khác
+]
+
+Bước 2: Đẩy Code lên GitHub:
+1. Tạo một Repository mới trên GitHub.
+2. Push toàn bộ code của bạn lên GitHub.
+
+Bước 3: Cấu hình trên Render:
+1. Truy cập Dashboard của Render.
+2. Nhấn nút New (màu xanh góc trên bên phải) -> Chọn Web Service.
+3. Chọn Build and deploy from a Git repository.
+4. Kết nối tài khoản GitHub của bạn và chọn Repository vừa tạo.
+5. Thiết lập các thông số:
+* Name: Tên app của bạn (ví dụ: my-python-app).
+* Region: Chọn Singapore (để tốc độ về Việt Nam nhanh nhất).
+* Branch: main (hoặc master).
+* Runtime: Python 3.
+* Build Command: pip install -r requirements.txt && python manage.py collectstatic --no-input
+* Start Command: Đây là lệnh để chạy app.
+* Flask: gunicorn app:app (với app đầu tiên là tên file app.py).
+* FastAPI: gunicorn -k uvicorn.workers.UvicornWorker main:app.
+* Instance Type: Chọn Free ($0/month).
+•  Chọn mục Settings ở cột bên trái.
+•  Kéo xuống phần Deploy và tìm mục Start Command.
+•  Bấm Edit và đổi gunicorn your_application.wsgi thành:
+	gunicorn <TEN_THU_MUC_CUA_BAN>.wsgi
+
+
+Bước 4: Xử lý Database (Để dùng vĩnh viễn)
+Như đã nói, Database mặc định của Render chỉ miễn phí 30 ngày. Để dùng lâu dài, bạn hãy kết hợp với Neon.tech (PostgreSQL miễn phí):
+1. Đăng ký tài khoản tại Neon.tech.
+2. Tạo một Project mới, bạn sẽ nhận được một chuỗi Connection String (dạng postgres://user:password@host/dbname).
+3. Quay lại Render, vào mục Environment của Web Service bạn vừa tạo.
+4. Thêm biến môi trường:
+* Key: DATABASE_URL
+* Value: Dán chuỗi Connection String từ Neon vào.
+* 
+Bước 5: Giải quyết vấn đề "Server ngủ" (Keep Alive) Vì bạn dùng gói Free, Render sẽ cho app "đi ngủ" sau 15 phút không có ai truy cập. Để khắc phục:
+1. Truy cập cron-job.org (miễn phí).
+2. Tạo một tài khoản và tạo một Cronjob mới.
+3. Dán URL trang web Render của bạn vào.
+4. Cài đặt thời gian là 15 phút một lần (Every 15 minutes).
+5. Hệ thống này sẽ tự động "gõ cửa" web của bạn giúp nó luôn luôn thức.
+
+Bước 6: Cách cập nhật Code sau này Mỗi khi bạn sửa code ở máy tính (Local), bạn chỉ cần thực hiện lệnh:
+git add .
+git commit -m "Cập nhật tính năng mới"
+git push origin main
+Render sẽ tự động nhận diện có code mới, tự động xóa bản cũ và cài đặt bản mới cho bạn. Bạn không cần phải vào trang web Render để bấm gì thêm.
+
+2. File requirements.txt chuẩn:
+asgiref==3.10.0
+certifi==2025.10.5
+charset-normalizer==3.4.4
+Django==5.2.7
+django-filter==25.2
+djangorestframework==3.16.1
+et_xmlfile==2.0.0
+gunicorn==23.0.0
+idna==3.11
+numpy==2.3.4
+openpyxl==3.1.5
+packaging==25.0
+pandas==2.3.3
+pillow==12.0.0
+pyasn1==0.6.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
+requests==2.32.5
+rsa==4.9.1
+setuptools==80.9.0
+six==1.17.0
+sqlparse==0.5.3
+tzdata==2025.2
+urllib3==2.5.0
+
+Một bước cuối cùng cho Django (Rất quan trọng)
+Để Render có thể hiển thị web của bạn, bạn cần vào file settings.py trong project Django và cập nhật dòng ALLOWED_HOSTS:
+ALLOWED_HOSTS = ['infor-0cgw.onrender.com', 'localhost', '127.0.0.1']
+

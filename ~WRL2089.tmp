@@ -1,0 +1,15 @@
+﻿Deploy python project lên github
+Không thể deploy trực tiếp để chạy code Python trên GitHub Pages, 
+nhưng bạn hoàn toàn có thể deploy miễn phí bằng cách kết hợp GitHub với các nền tảng hỗ trợ Python khác
+
+Hướng dẫn nhanh cách deploy với Render (Phổ biến nhất)
+Chuẩn bị file: Đảm bảo project có file requirements.txt (liệt kê các thư viện) và một file chạy chính (ví dụ main.py).
+
+Đẩy code lên GitHub: Tạo một repository và push toàn bộ code lên đó.
+
+Kết nối với Render:
+1. Truy cập render.com và đăng nhập bằng tài khoản GitHub.
+2. Chọn New > Web Service.
+3. Chọn Repository bạn vừa tạo.
+4. Ở phần Start Command, nhập lệnh để chạy app (ví dụ: gunicorn main:app).
+5. Nhấn Deploy.
