@@ -386,22 +386,9 @@ def profiles_call_view_update(request):
 def profiles_list(request):
     try:
         # TRUY VẤN TRỰC TIẾP TỪ DATABASE (Không dùng requests localhost nữa)
-        profiles_data_queryset = Profiles.objects.all()
+        profiles_data = Profiles.objects.all()  # .order_by('full_name')
 
-        # Chuyển đổi QuerySet thành list để xử lý data nếu cần
-        profiles_data = []
-        for p in profiles_data_queryset:
-            profiles_data.append({
-                'full_name': p.full_name,
-                'birthday': p.birthday,
-                'sex': p.sex,
-                'birth_place': p.birth_place,
-                'nation': p.nation,
-                'recruitment_day': p.recruitment_day,
-                'job_title': p.job_title,
-                'department': p.department,
-            })
-
+        profiles_data = list(profiles_data.values())
         # Nếu bạn vẫn muốn giữ logic format ngày tháng của bạn:
         for profile in profiles_data:
             if isinstance(profile['birthday'], str):  # Nếu là chuỗi thì mới parse
