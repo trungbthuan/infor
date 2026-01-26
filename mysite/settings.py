@@ -88,13 +88,13 @@ if os.environ.get('DATABASE_URL'):
     DATABASES = {
         'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': BASE_DIR / 'db.sqlite3',
-#         }
-#     }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Thêm đoạn này để kiểm tra xem Render có nhận được biến không
 if os.environ.get('DATABASE_URL'):
@@ -134,9 +134,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# Đảm bảo BASE_DIR đã được định nghĩa ở đầu file settings.py
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 STATIC_URL = '/static/'
 
 # Nơi chứa các file tĩnh gốc của bạn (nếu bạn để trong thư mục mysite/static)
@@ -145,6 +142,14 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Nơi Render sẽ gom file vào (nên đặt tên khác với STATICFILES_DIRS)
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Cấu hình WhiteNoise
+if not DEBUG:
+    # Trên Render (Production): Dùng WhiteNoise để nén và lưu cache mạnh
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    # Trên Local: Dùng storage mặc định để tránh lỗi không tìm thấy file khi chưa chạy collectstatic
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

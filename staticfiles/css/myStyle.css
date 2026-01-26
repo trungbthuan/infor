@@ -1,0 +1,55 @@
+h1 {
+   color: #008cba;
+}
+
+.ocean-blue {
+   color: #008cba;
+}
+
+p {
+   color: goldenrod;
+}
+
+.color-red {
+   color: red;
+}
+
+.flex-row {
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-start;
+   align-items: flex-start;
+   align-content: flex-start;
+}
+
+.flex-row-end {
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-end;
+}
+
+.flex-row-start {
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-start;
+}
+
+.flex-col {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-start;
+   align-items: flex-start;
+   align-content: flex-start;
+}
+
+.flex-col-end {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-end;
+}
+
+.flex-col-start {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-start;
+}

@@ -1,0 +1,10 @@
+**/db.sqlite3
+
+# Python bytecode
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Thư mục môi trường ảo
+venv/
+myenv/

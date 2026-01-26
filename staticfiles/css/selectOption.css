@@ -1,0 +1,55 @@
+.selectdiv {
+  position: relative;
+  /*Don't really need this just for demo styling*/
+  float: left;
+  min-width: 200px;
+  margin: 10px 0px;
+}
+
+/* IE11 hide native button (thanks Matt!) */
+select::-ms-expand {
+display: none;
+}
+
+.selectdiv:after {
+  content: '<>';
+  font: 17px "Consolas", monospace;
+  color: #008cba;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+  right: 11px;
+  /*Adjust for position however you want*/
+  top: 11px;
+  padding: 0px 0px 0px 2px;
+  border-bottom: 1px solid #008cba;
+  /*left line */
+  
+  position: absolute;
+  pointer-events: none;
+}
+
+.selectdiv select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Add some styling */
+  
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: 35px;
+  /* float: right; */
+  margin: 5px 0px;
+  padding: 0px 24px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #008cba;
+  background-color: transparent;
+  background-image: none;
+  border: 2px solid #008cba;
+  border-radius: 5px;
+  -ms-word-break: normal;
+  word-break: normal;
+}
