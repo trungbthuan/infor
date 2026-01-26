@@ -16,8 +16,8 @@ os.environ["DJANGO_RUNSERVER_HIDE_WARNING"] = "true"
 SECRET_KEY = 'django-insecure-gmq5ie-9v1hplg)p8))j(@u$)lrhm#-s7xnk-x8xqom!*pn+tj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Tắt DEBUG khi deploy để bảo mật
-DEBUG = False
+# Tự động bật DEBUG ở Local và tắt ở Render
+DEBUG = os.environ.get('RENDER') is None
 
 ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['infor-0cgw.onrender.com', 'localhost', '127.0.0.1']
@@ -135,22 +135,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Nơi chứa các file tĩnh gốc của bạn (nếu bạn để trong thư mục mysite/static)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
-# Nơi Render sẽ gom file vào (nên đặt tên khác với STATICFILES_DIRS)
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Cấu hình WhiteNoise
 if not DEBUG:
-    # Trên Render (Production): Dùng WhiteNoise để nén và lưu cache mạnh
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
-    # Trên Local: Dùng storage mặc định để tránh lỗi không tìm thấy file khi chưa chạy collectstatic
+    # Ở Local, dùng mặc định để không bị lỗi MIME type
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
