@@ -1,6 +1,7 @@
 **/db.sqlite3
 
 # Python bytecode
+**/staticfiles/
 **/__pycache__/
 *.py[cod]
 *$py.class
