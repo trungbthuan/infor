@@ -35,7 +35,7 @@ def student_list(request):
     # api_url = 'http://localhost:8080/api/api-list-students/'
     # Gọi trực tiếp hàm view API, không dùng requests.get(url)
     response = students_list(request)
-    students_data = response.json()
+    students_data = response.data
     print(students_data)
     for student in students_data:
         dt = datetime.strptime(student['birthday'], "%d/%m/%Y")
@@ -48,23 +48,35 @@ def student_list(request):
 def student_update(request):
     # api_url = 'http://localhost:8080/api/api-list-students/'
     try:
+        # 1. Chúng ta truyền chính object 'request' vào để hàm API lấy được params (request.GET)
         response = students_list(request)
-        # response = requests.get(api_url, params=request.GET)
+
+        # 2. Kiểm tra mã trạng thái trả về từ DRF Response
         if response.status_code == 200:
-            try:
-                students_data = response.json()
-                for student in students_data:
-                    dt = datetime.strptime(student['birthday'], "%d/%m/%Y")
-                    student['birthday'] = dt.date()
-            except requests.exceptions.JSONDecodeError:
-                return render(request, 'notification.html', {'message': 'Lỗi: Phản hồi từ API không phải là JSON hợp lệ.'})
+            # Lấy dữ liệu từ thuộc tính .data (DRF) thay vì .json()
+            students_data = response.data
+
+            # 3. Xử lý định dạng ngày tháng
+            for student in students_data:
+                # Kiểm tra nếu birthday là chuỗi thì mới parse,
+                # vì đôi khi gọi nội bộ dữ liệu có thể đã là object date
+                if isinstance(student.get('birthday'), str):
+                    try:
+                        dt = datetime.strptime(student['birthday'], "%d/%m/%Y")
+                        student['birthday'] = dt.date()
+                    except (ValueError, KeyError):
+                        pass
+
             return render(request, 'student-update.html', {'students': students_data})
+
         else:
             error_message = f'Lỗi: Không thể lấy dữ liệu sinh viên. Mã trạng thái: {response.status_code}'
             return render(request, 'notification.html', {'message': error_message})
-    except requests.exceptions.RequestException as e:
-        error_message = f'Lỗi kết nối API: {e}'
-        return render(request, 'api/notification.html', {'message': error_message})
+
+    except Exception as e:
+        # Bắt các lỗi logic hoặc lỗi import
+        error_message = f'Lỗi hệ thống khi truy vấn dữ liệu: {str(e)}'
+        return render(request, 'notification.html', {'message': error_message})
 
 
 @login_required
@@ -74,7 +86,7 @@ def student_edit(request, id):  # Gọi form student-edit.html
         response = students_get_by_id(request, id)
         # response = requests.get(api_url)
         if response.status_code == 200:
-            students_data = response.json()
+            students_data = response.data
             dt = datetime.strptime(students_data['birthday'], "%d/%m/%Y")
             students_data['birthday'] = dt.date()
             return render(request, 'student-edit.html', {'student': students_data})
