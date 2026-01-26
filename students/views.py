@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from api.views import students_list, students_get_by_id, students_put, students_delete
 
 
 @require_http_methods(["GET"])  # Chỉ cho phép method GET
@@ -32,9 +33,8 @@ def student_post(request):
 @login_required
 def student_list(request):
     # api_url = 'http://localhost:8080/api/api-list-students/'
-    base_url = request.build_absolute_uri('/')[:-1]
-    api_url = f"{base_url}/api/api-list-students/"
-    response = requests.get(api_url)
+    # Gọi trực tiếp hàm view API, không dùng requests.get(url)
+    response = students_list(request)
     students_data = response.json()
     print(students_data)
     for student in students_data:
@@ -47,10 +47,9 @@ def student_list(request):
 @login_required
 def student_update(request):
     # api_url = 'http://localhost:8080/api/api-list-students/'
-    base_url = request.build_absolute_uri('/')[:-1]
-    api_url = f"{base_url}/api/api-list-students/"
     try:
-        response = requests.get(api_url, params=request.GET)
+        response = students_list(request)
+        # response = requests.get(api_url, params=request.GET)
         if response.status_code == 200:
             try:
                 students_data = response.json()
@@ -71,10 +70,9 @@ def student_update(request):
 @login_required
 def student_edit(request, id):  # Gọi form student-edit.html
     # api_url = f'http://localhost:8080/api/api-get-students-by-id/{id}/'
-    base_url = request.build_absolute_uri('/')[:-1]
-    api_url = f"{base_url}/api/api-get-students-by-id/{id}/"
     try:
-        response = requests.get(api_url)
+        response = students_get_by_id(request, id)
+        # response = requests.get(api_url)
         if response.status_code == 200:
             students_data = response.json()
             dt = datetime.strptime(students_data['birthday'], "%d/%m/%Y")
@@ -89,51 +87,50 @@ def student_edit(request, id):  # Gọi form student-edit.html
 
 
 @login_required
-# Xử lý CẬP NHẬT khi người dùng gửi từ form student-edit.html
 def student_put_by_id(request, id):
 
     # api_url = f'http://localhost:8080/api/api-put-students/{id}/'
-    base_url = request.build_absolute_uri('/')[:-1]
-    api_url = f"{base_url}/api/api-put-students/{id}/"
     if request.method == 'POST':
-        # 2. Chuẩn bị dữ liệu từ form HTML (request.POST)
-        data_request = request.POST.dict()
 
-        response = requests.put(api_url, data=data_request)
-
-        if response.status_code in [200, 201]:
-            return render(request, 'notification.html', {'message': f'Cập nhật sinh viên {id} thành công!'})
-        else:
-            try:
-                error_json = response.json()
-            except requests.exceptions.JSONDecodeError:
-                error_json = {"detail": response.text}
-
-            error_message = f'Cập nhật thất bại. Chi tiết: {json.dumps(error_json, ensure_ascii=False)}'
-            return render(request, 'notification.html', {'message': error_message})
+        request.method = 'PUT'  # Thay đổi method thành PUT
+        # Gọi trực tiếp hàm view API, không dùng requests.put(url)
+        try:
+            response = students_put(request, id)
+            # 3. Xử lý kết quả trả về (Response từ DRF)
+            if response.status_code in [200, 204]:
+                return render(request, 'notification.html', {
+                    'message': f'Cập nhật sinh viên {id} thành công!'
+                })
+            else:
+                # Lấy dữ liệu lỗi từ response.data (DRF trả về .data thay vì .json())
+                error_details = response.data
+                error_message = f'Cập nhật thất bại (Mã {response.status_code}). Chi tiết: {error_details}'
+                return render(request, 'notification.html', {'message': error_message})
+        except Exception as e:
+            return render(request, 'notification.html', {'message': f'Lỗi hệ thống: {str(e)}'})
+    # Nếu là GET hoặc phương thức khác
+    return render(request, 'notification.html', {'message': f'Lỗi hệ thống: {id}'})
 
 
 @login_required
 def student_delete_by_id(request, id):
     # api_url = f'http://localhost:8080/api/api-delete-students/{id}/'
-    base_url = request.build_absolute_uri('/')[:-1]
-    api_url = f"{base_url}/api/api-delete-students/{id}/"
     # 1. Gửi yêu cầu DELETE đến API (THAY vì requests.get)
-    response = requests.delete(api_url)
+    request.method = 'DELETE'
+    try:
+        # 2. Gọi trực tiếp hàm View API, không dùng requests qua HTTP
+        response = students_delete(request, id)
 
-    # 2. Kiểm tra mã trạng thái thành công 204
-    if response.status_code == 204:
-        # Nếu xóa thành công, CHUYỂN HƯỚNG về trang danh sách/cập nhật
-        return redirect('update')
-    else:
-        error_message = f'Lỗi xóa sinh viên {id}. Mã trạng thái: {response.status_code}'
+        # 3. Kiểm tra mã trạng thái thành công (DRF thường trả về 204 No Content khi xóa)
+        if response.status_code in [204, 200]:
+            # Nếu xóa thành công, chuyển hướng về trang danh sách
+            return redirect('update')
+        else:
+            # Lấy chi tiết lỗi từ response.data
+            error_details = getattr(response, 'data', 'Không có chi tiết lỗi')
+            error_message = f'Lỗi xóa sinh viên {id}. Mã trạng thái: {response.status_code} - Chi tiết: {error_details}'
+            return render(request, 'notification.html', {'message': error_message})
 
-        # Nếu API trả về JSON lỗi, bạn có thể cố gắng đọc nó
-        try:
-            error_details = response.json()
-            error_message += f' - Chi tiết: {error_details}'
-        except:
-            # Bỏ qua nếu không phải JSON
-            pass
-
-        return render(request, 'notification.html', {'message': error_message})
+    except Exception as e:
+        # Xử lý các lỗi phát sinh trong quá trình gọi hàm
+        return render(request, 'notification.html', {'message': f'Lỗi hệ thống: {str(e)}'})
