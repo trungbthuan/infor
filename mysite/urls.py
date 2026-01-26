@@ -32,6 +32,8 @@ urlpatterns = [
     path('ajax/', include('ajax.urls')),
 ]
 
-# Phục vụ file tĩnh ở môi trường Local
+# Phục vụ file tĩnh ở Local
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
     urlpatterns += staticfiles_urlpatterns()
