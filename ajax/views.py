@@ -105,22 +105,35 @@ def ajax_update(request, id):
 
 
 def ajax_call_view_edit(request, id):
-    api_url = f'https://infor-0cgw.onrender.com/api/profile/{id}/'
     try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            profile = response.json()
-            dt = datetime.strptime(profile['birthday'], "%d/%m/%Y")
-            profile['birthday'] = dt.date()
-            dt2 = datetime.strptime(profile['recruitment_day'], "%d/%m/%Y")
-            profile['recruitment_day'] = dt2.date()
-            return render(request, 'ajax-edit.html', {'profile': profile})
-        else:
-            error_message = f'Lỗi: Không thể lấy dữ liệu nhân viên. Mã trạng thái: {response.status_code}'
-            return render(request, 'notification.html', {'message': error_message})
-    except requests.exceptions.RequestException as e:
-        error_message = f'Lỗi kết nối API: {e}'
+        # 1. Lấy dữ liệu trực tiếp từ Database
+        profile = get_object_or_404(Profiles, id=id)
+
+        # 2. Với Model, birthday và recruitment_day đã là kiểu date.
+        # Bạn KHÔNG cần parse strptime nữa.
+
+        return render(request, 'ajax-edit.html', {'profile': profile})
+
+    except Exception as e:
+        error_message = f'Lỗi hệ thống: {str(e)}'
         return render(request, 'notification.html', {'message': error_message})
+
+    # api_url = f'https://infor-0cgw.onrender.com/api/profile/{id}/'
+    # try:
+    #     response = requests.get(api_url)
+    #     if response.status_code == 200:
+    #         profile = response.json()
+    #         dt = datetime.strptime(profile['birthday'], "%d/%m/%Y")
+    #         profile['birthday'] = dt.date()
+    #         dt2 = datetime.strptime(profile['recruitment_day'], "%d/%m/%Y")
+    #         profile['recruitment_day'] = dt2.date()
+    #         return render(request, 'ajax-edit.html', {'profile': profile})
+    #     else:
+    #         error_message = f'Lỗi: Không thể lấy dữ liệu nhân viên. Mã trạng thái: {response.status_code}'
+    #         return render(request, 'notification.html', {'message': error_message})
+    # except requests.exceptions.RequestException as e:
+    #     error_message = f'Lỗi kết nối API: {e}'
+    #     return render(request, 'notification.html', {'message': error_message})
 
 
 def ajax_home(request):
