@@ -105,7 +105,7 @@ def ajax_update(request, id):
 
 
 def ajax_call_view_edit(request, id):
-    api_url = f'http://localhost:8080/api/profile/{id}/'
+    api_url = f'https://infor-0cgw.onrender.com/api/profile/{id}/'
     try:
         response = requests.get(api_url)
         if response.status_code == 200:
