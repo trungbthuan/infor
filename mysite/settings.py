@@ -80,7 +80,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
+# Tự động bật DEBUG ở Local và tắt ở Render
+DEBUG = os.environ.get('RENDER') is None
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 # Nếu có PostgreSQL thì dùng, không thì dùng SQLite
