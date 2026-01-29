@@ -2,9 +2,10 @@ from datetime import datetime
 import requests
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from api.forms import ProfileForm
+# from api.forms import ProfileForm
+from django.contrib.auth.decorators import login_required
 from api.models import Profiles
-from django.urls import reverse
+# from django.urls import reverse
 
 # ----------------------- Gọi form thêm mới nhân viên -------------------------------
 
@@ -144,29 +145,56 @@ def ajax_update(request):
     return render(request, 'ajax-update.html')
 
 
+# @login_required
 def ajax_delete_by_id(request, id):
-    api_url = f'http://localhost:8080/api/profile/{id}/'
-    if request.method == 'POST':
-        s = requests.Session()
-        s.cookies.update(request.COOKIES)
-        csrf_token = request.COOKIES.get('csrftoken')
+    # Chúng ta cho phép cả POST (từ form) hoặc DELETE (từ Fetch API)
+    if request.method in ['POST', 'DELETE']:
+        try:
+            # 1. Tìm đối tượng cần xóa trong Database
+            profile_obj = get_object_or_404(Profiles, id=id)
 
-        headers = {
-            'X-CSRFToken': csrf_token
-        }
+            # 2. Thực hiện xóa trực tiếp
+            profile_obj.delete()
 
-        response = s.delete(api_url, headers=headers)
+            # 3. Phản hồi
+            # Nếu gọi từ chuyển hướng trang thông thường
+            if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+                return redirect('ajax_update')
 
-        if response.status_code == 204:
-            # Xóa thành công, chuyển hướng về trang danh sách
-            return redirect('ajax_update')
-        else:
-            error_details = response.json() if response.content else None
+            # Nếu gọi từ AJAX (Fetch API), trả về mã 204 thành công
+            return HttpResponse(status=204)
+
+        except Exception as e:
             context = {
-                'Thông báo:': 'Đây là lỗ bạn càn sửa',
-                'error_message': f'Cập nhật thất bại. Mã lỗi: {response.status_code}',
-                'api_response': error_details,
+                'error_message': f'Xóa thất bại. Lỗi: {str(e)}',
             }
             return render(request, 'notification.html', {'message': context})
     else:
-        return HttpResponse("Chương trình thực hiện không thành công", status=405)
+        # Trả về lỗi nếu dùng sai phương thức (ví dụ dùng GET để xóa)
+        return HttpResponse("Phương thức không được hỗ trợ", status=405)
+
+    # api_url = f'http://localhost:8080/api/profile/{id}/'
+    # if request.method == 'POST':
+    #     s = requests.Session()
+    #     s.cookies.update(request.COOKIES)
+    #     csrf_token = request.COOKIES.get('csrftoken')
+
+    #     headers = {
+    #         'X-CSRFToken': csrf_token
+    #     }
+
+    #     response = s.delete(api_url, headers=headers)
+
+    #     if response.status_code == 204:
+    #         # Xóa thành công, chuyển hướng về trang danh sách
+    #         return redirect('ajax_update')
+    #     else:
+    #         error_details = response.json() if response.content else None
+    #         context = {
+    #             'Thông báo:': 'Đây là lỗ bạn càn sửa',
+    #             'error_message': f'Cập nhật thất bại. Mã lỗi: {response.status_code}',
+    #             'api_response': error_details,
+    #         }
+    #         return render(request, 'notification.html', {'message': context})
+    # else:
+    #     return HttpResponse("Chương trình thực hiện không thành công", status=405)
