@@ -8,130 +8,131 @@
 <h1>Danh sách thông tin nhân viên</h1>
 
 <table id="table" class="styled-table">
-   <thead>
-      <tr>
-         <th>Stt</th>
-         <th>Id</th>
-         <th>Full Name</th>
-         <th>Birthday</th>
-         <th>Sex</th>
-         <th>Birth place</th>
-         <th>Nation</th>
-         <th>Recruitment day</th>
-         <th>Job title</th>
-         <th>Department</th>
-         <th>Action</th>
-      </tr>
-   </thead>
-   <tbody id="profile-table-body"></tbody>
+    <thead>
+        <tr>
+            <th>Stt</th>
+            <th>Id</th>
+            <th>Full Name</th>
+            <th>Birthday</th>
+            <th>Sex</th>
+            <th>Birth place</th>
+            <th>Nation</th>
+            <th>Recruitment day</th>
+            <th>Job title</th>
+            <th>Department</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="profile-table-body"></tbody>
 </table>
 
 <button onclick="fetchProfiles()" class="btn-like">Tải Danh Sách Hồ Sơ</button>
 <p id="loading-status" style="color: blue">Nhấn nút để tải dữ liệu...</p>
 
 <script>
-   const API_URL = "http://127.0.0.1:8080/api/profile/";
-   const tableBody = document.getElementById("profile-table-body");
-   const statusElement = document.getElementById("loading-status");
-   let table = document.getElementById("table");
-   const csrftoken = getCookie("csrftoken");
+    //const API_URL = "http://127.0.0.1:8080/api/profile/";
+    const API_URL = "https://infor-0cgw.onrender.com/api/profile/";
+    const tableBody = document.getElementById("profile-table-body");
+    const statusElement = document.getElementById("loading-status");
+    let table = document.getElementById("table");
+    const csrftoken = getCookie("csrftoken");
 
-   function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== "") {
-         const cookies = document.cookie.split(";");
-         for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + "=") {
-               cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-               break;
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
-         }
-      }
-      return cookieValue;
-   }
+        }
+        return cookieValue;
+    }
 
-   function ajax_EditProfile(id, full_name) {
-      const confirmEdit = confirm(`Bạn có chắc chắn muốn sửa hồ sơ ${full_name} không?`);
-      if (confirmEdit) {
-         const editUrl = `/ajax/ajax_call_view_edit/${id}/`;
-         // Thực hiện chuyển hướng trình duyệt
-         window.location.href = editUrl;
-      }
-   }
+    function ajax_EditProfile(id, full_name) {
+        const confirmEdit = confirm(`Bạn có chắc chắn muốn sửa hồ sơ ${full_name} không?`);
+        if (confirmEdit) {
+            const editUrl = `/ajax/ajax_call_view_edit/${id}/`;
+            // Thực hiện chuyển hướng trình duyệt
+            window.location.href = editUrl;
+        }
+    }
 
-   function ajax_DeleteProfile(id, full_name) {
-      const confirmDelete = confirm(`Bạn có chắc chắn muốn xóa hồ sơ ${full_name} không?`);
-      if (confirmDelete) {
-         // URL API Endpoint để xóa hồ sơ
-         const apiUrl = `/api/profile/${id}/`;
+    function ajax_DeleteProfile(id, full_name) {
+        const confirmDelete = confirm(`Bạn có chắc chắn muốn xóa hồ sơ ${full_name} không?`);
+        if (confirmDelete) {
+            // URL API Endpoint để xóa hồ sơ
+            const apiUrl = `/api/profile/${id}/`;
 
-         fetch(apiUrl, {
-            method: "DELETE", // 💥 SỬ DỤNG PHƯƠNG THỨC HTTP DELETE
-            headers: {
-               "X-CSRFToken": csrftoken, // 💥 Gửi CSRF Token để bảo mật
-            },
-         })
-            .then((response) => {
-               // Kiểm tra mã phản hồi
-               if (response.ok) {
-                  // Mã 204 No Content là phản hồi thành công cho DELETE
-
-                  // 💥 THÀNH CÔNG: Xóa hàng khỏi bảng HTML mà không cần tải lại trang
-                  const rowToRemove = document.getElementById(`profile-row-${id}`);
-                  if (rowToRemove) {
-                     rowToRemove.remove();
-                  }
-                  alert(`Đã xóa hồ sơ ${full_name} thành công.`);
-               } else {
-                  // Xử lý lỗi từ server (ví dụ: không có quyền, hồ sơ không tồn tại)
-                  return response.json().then((errorData) => {
-                     alert(`Xóa thất bại. Lỗi: ${JSON.stringify(errorData)}`);
-                  });
-               }
+            fetch(apiUrl, {
+                method: "DELETE", // 💥 SỬ DỤNG PHƯƠNG THỨC HTTP DELETE
+                headers: {
+                    "X-CSRFToken": csrftoken, // 💥 Gửi CSRF Token để bảo mật
+                },
             })
-            .catch((error) => {
-               // Xử lý lỗi mạng (Network error)
-               console.error("Lỗi mạng hoặc xử lý:", error);
-               alert("Có lỗi xảy ra trong quá trình xóa.");
-            });
-      }
-   }
+                .then((response) => {
+                    // Kiểm tra mã phản hồi
+                    if (response.ok) {
+                        // Mã 204 No Content là phản hồi thành công cho DELETE
 
-   function fetchProfiles() {
-      statusElement.textContent = "Đang tải dữ liệu...";
-      tableBody.innerHTML = ""; // Xóa dữ liệu cũ nếu có
+                        // 💥 THÀNH CÔNG: Xóa hàng khỏi bảng HTML mà không cần tải lại trang
+                        const rowToRemove = document.getElementById(`profile-row-${id}`);
+                        if (rowToRemove) {
+                            rowToRemove.remove();
+                        }
+                        alert(`Đã xóa hồ sơ ${full_name} thành công.`);
+                    } else {
+                        // Xử lý lỗi từ server (ví dụ: không có quyền, hồ sơ không tồn tại)
+                        return response.json().then((errorData) => {
+                            alert(`Xóa thất bại. Lỗi: ${JSON.stringify(errorData)}`);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    // Xử lý lỗi mạng (Network error)
+                    console.error("Lỗi mạng hoặc xử lý:", error);
+                    alert("Có lỗi xảy ra trong quá trình xóa.");
+                });
+        }
+    }
 
-      // 1. Gửi yêu cầu GET bằng Fetch API
-      fetch(API_URL)
-         // 2. Xử lý phản hồi (response) đầu tiên
-         .then((response) => {
-            // Kiểm tra xem phản hồi có thành công không (Mã 200-299)
-            if (!response.ok) {
-               throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
-            }
-            // Chuyển đổi nội dung phản hồi thành JSON
-            return response.json();
-         })
-         // 3. Xử lý dữ liệu JSON đã nhận (data là danh sách hồ sơ)
-         .then((data) => {
-            if (data.length === 0) {
-               statusElement.textContent = "Không tìm thấy hồ sơ nào.";
-               return;
-            }
+    function fetchProfiles() {
+        statusElement.textContent = "Đang tải dữ liệu...";
+        tableBody.innerHTML = ""; // Xóa dữ liệu cũ nếu có
 
-            let stt = 0;
+        // 1. Gửi yêu cầu GET bằng Fetch API
+        fetch(API_URL)
+            // 2. Xử lý phản hồi (response) đầu tiên
+            .then((response) => {
+                // Kiểm tra xem phản hồi có thành công không (Mã 200-299)
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+                // Chuyển đổi nội dung phản hồi thành JSON
+                return response.json();
+            })
+            // 3. Xử lý dữ liệu JSON đã nhận (data là danh sách hồ sơ)
+            .then((data) => {
+                if (data.length === 0) {
+                    statusElement.textContent = "Không tìm thấy hồ sơ nào.";
+                    return;
+                }
 
-            data.forEach((profile) => {
-               stt++;
-               // Tạo một hàng mới (<tr>)
-               const row = document.createElement("tr");
+                let stt = 0;
 
-               // Thêm ID để dễ dàng thao tác sau này (ví dụ: xóa)
-               row.id = `profile-row-${profile.id}`;
+                data.forEach((profile) => {
+                    stt++;
+                    // Tạo một hàng mới (<tr>)
+                    const row = document.createElement("tr");
 
-               // Tạo nội dung HTML cho hàng
-               row.innerHTML = `
+                    // Thêm ID để dễ dàng thao tác sau này (ví dụ: xóa)
+                    row.id = `profile-row-${profile.id}`;
+
+                    // Tạo nội dung HTML cho hàng
+                    row.innerHTML = `
                         <td>${zeroPad(stt.toString(), 3, "0")}</td>
                         <td>${profile.id}</td>
                         <td>${profile.full_name}</td>
@@ -150,22 +151,22 @@
                             </div>
                         </td>
                     `;
-               // Thêm hàng vào bảng
-               tableBody.appendChild(row);
+                    // Thêm hàng vào bảng
+                    tableBody.appendChild(row);
+                });
+
+                statusElement.textContent = `Đã tải thành công ${data.length} hồ sơ.`;
+            })
+            // 4. Bắt lỗi (Lỗi mạng hoặc lỗi xử lý)
+            .catch((error) => {
+                console.error("Lỗi khi tải hồ sơ:", error);
+                statusElement.textContent = `Lỗi: Không thể kết nối hoặc xử lý dữ liệu. Vui lòng kiểm tra console.`;
             });
+    }
 
-            statusElement.textContent = `Đã tải thành công ${data.length} hồ sơ.`;
-         })
-         // 4. Bắt lỗi (Lỗi mạng hoặc lỗi xử lý)
-         .catch((error) => {
-            console.error("Lỗi khi tải hồ sơ:", error);
-            statusElement.textContent = `Lỗi: Không thể kết nối hoặc xử lý dữ liệu. Vui lòng kiểm tra console.`;
-         });
-   }
-
-   function zeroPad(numberStr, padStart, char) {
-      return numberStr.padStart(padStart, char);
-   }
+    function zeroPad(numberStr, padStart, char) {
+        return numberStr.padStart(padStart, char);
+    }
 </script>
 
 {% endblock %}
