@@ -31,7 +31,8 @@
 
 <script>
     //const API_URL = "http://127.0.0.1:8080/api/profile/";
-    const API_URL = "https://infor-0cgw.onrender.com/api/profile/";
+    const API_URL = "/api/profile/";
+    //const API_URL = "https://infor-0cgw.onrender.com/api/profile/";
     const tableBody = document.getElementById("profile-table-body");
     const statusElement = document.getElementById("loading-status");
     let table = document.getElementById("table");
@@ -51,12 +52,11 @@
         }
         return cookieValue;
     }
-
     function ajax_EditProfile(id, full_name) {
         const confirmEdit = confirm(`Bạn có chắc chắn muốn sửa hồ sơ ${full_name} không?`);
         if (confirmEdit) {
+            // Sử dụng đường dẫn tương đối, Django sẽ tự hiểu domain hiện tại
             const editUrl = `/ajax/ajax_call_view_edit/${id}/`;
-            // Thực hiện chuyển hướng trình duyệt
             window.location.href = editUrl;
         }
     }
