@@ -36,7 +36,7 @@ def student_list(request):
     # Gọi trực tiếp hàm view API, không dùng requests.get(url)
     response = students_list(request)
     students_data = response.data
-    print(students_data)
+    # print(students_data)
     for student in students_data:
         dt = datetime.strptime(student['birthday'], "%d/%m/%Y")
         student['birthday'] = dt.date()

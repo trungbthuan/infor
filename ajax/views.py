@@ -18,6 +18,7 @@ def ajax_create(request):
 # ----------------------- Cập nhật thông tin từ view edit ---------------------------
 
 
+@login_required
 def ajax_update(request, id):
     # api_url = f'http://localhost:8080/api/profile/{id}/'
     api_url = f'https://infor-0cgw.onrender.com/student/list/{id}/'
@@ -105,6 +106,7 @@ def ajax_update(request, id):
 # ----------------------- Gọi view edit  ---------------------------
 
 
+@login_required
 def ajax_call_view_edit(request, id):
     try:
         # 1. Lấy dữ liệu trực tiếp từ Database
@@ -145,7 +147,7 @@ def ajax_update(request):
     return render(request, 'ajax-update.html')
 
 
-# @login_required
+@login_required
 def ajax_delete_by_id(request, id):
     # Chúng ta cho phép cả POST (từ form) hoặc DELETE (từ Fetch API)
     if request.method in ['POST', 'DELETE']:
