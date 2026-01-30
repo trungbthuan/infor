@@ -4,6 +4,7 @@ from . import views as testUrl_views
 
 urlpatterns = [
     path('home/', testUrl_views.call_home, name='home'),
+    path('dashboard/', testUrl_views.dashboard, name='dashboard'),  # Trang chủ
     path('main/', testUrl_views.call_main, name='main'),
     path('temp/', testUrl_views.call_temp, name='temp'),
     path('temp2/', testUrl_views.call_temp2, name='temp2'),
