@@ -2,14 +2,19 @@ from datetime import datetime
 import requests
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-# from api.forms import ProfileForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from api.models import Profiles
-# from django.urls import reverse
+
+# chúng ta sẽ dùng @user_passes_test hoặc kiểm tra thuộc tính is_staff/is_superuser để chỉ cho phép Admin thao tác xóa hoặc sửa
+
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
 
 # ----------------------- Gọi form thêm mới nhân viên -------------------------------
 
 
+@login_required
 def ajax_create(request):
     return render(request, 'ajax-create.html')
 
@@ -21,7 +26,7 @@ def ajax_create(request):
 @login_required
 def ajax_update(request, id):
     # api_url = f'http://localhost:8080/api/profile/{id}/'
-    api_url = f'https://infor-0cgw.onrender.com/student/list/{id}/'
+    api_url = f'/api/profile/{id}/'
     # --- Xử lý CẬP NHẬT DỮ LIỆU (Khi form được gửi: POST) ---
     if request.method == 'POST':
 
@@ -147,7 +152,7 @@ def ajax_update(request):
     return render(request, 'ajax-update.html')
 
 
-@login_required
+@user_passes_test(is_admin, login_url='/login/')
 def ajax_delete_by_id(request, id):
     # Chúng ta cho phép cả POST (từ form) hoặc DELETE (từ Fetch API)
     if request.method in ['POST', 'DELETE']:

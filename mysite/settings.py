@@ -156,7 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 
 # URL để chuyển hướng người dùng đến sau khi đăng nhập thành công (Thường là trang Dashboard/Home)
-LOGIN_REDIRECT_URL = '/test/home/'  # Thay bằng URL của form bạn tạo
+LOGIN_REDIRECT_URL = '/home/'  # Thay bằng URL của form bạn tạo
 
 # URL để chuyển hướng người dùng đến sau khi đăng xuất
 LOGOUT_REDIRECT_URL = '/login/'
